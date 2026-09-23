@@ -1,0 +1,10 @@
+# Serving-only dependencies (what the Docker image installs).
+# Keep minimal: torch/mlflow/jupyter stay in requirements.txt (training/dev).
+fastapi
+uvicorn
+pydantic
+pandas
+numpy
+scikit-learn
+lightgbm
+joblib

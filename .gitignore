@@ -1,0 +1,37 @@
+# Environments
+.venv/
+venv/
+
+# Python / test caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Data (large; see scripts note in README to download)
+data/
+*.parquet
+
+# MLflow tracking (regenerable)
+mlruns/
+mlruns_backup*/
+
+# Model artifacts (regenerable via src/*.py; keep repo lean)
+models/
+*.pt
+*.joblib
+*.pkl
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

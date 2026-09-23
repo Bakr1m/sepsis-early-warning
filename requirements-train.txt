@@ -1,0 +1,7 @@
+# Training-only deps (local retraining; NOT in the Docker image).
+# Install with:  .venv/bin/pip install -r requirements-train.txt
+-r requirements-serve.txt
+mlflow==3.16.1
+# CPU-only torch (CUDA wheels are ~2 GB of dead weight on CPU).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu

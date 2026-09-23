@@ -1,0 +1,23 @@
+# Full local stack (pinned, Python 3.14 venv).
+# Serving-only subset lives in requirements-serve.txt (what Docker installs).
+pandas==3.0.6
+numpy==2.5.3
+matplotlib==3.11.2
+seaborn==0.13.2
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+jupyter==1.1.1
+lightgbm==4.7.0
+pyarrow==25.0.1
+pydantic==2.13.5
+fastapi==0.141.1
+uvicorn==0.53.0
+httpx==0.28.1
+streamlit==1.64.0
+pytest==9.1.1
+ruff==0.16.8
+mlflow==3.16.1
+# CPU-only torch (CUDA wheels are ~2 GB of dead weight on CPU).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu
