@@ -26,9 +26,19 @@ THRESHOLD = 0.25  # Day-25 recall-0.8 operating point (0.2527)
 
 app = FastAPI(title="Sepsis Early-Warning API")
 
-model = joblib.load(MODEL_PATH)
-# Column order straight from the fitted estimator — always matches training.
-FEATURES = list(model.feature_names_in_)
+_model = None
+_FEATURES = None
+
+
+def get_model():
+    """Load once on first request (never at import: keeps tests hermetic and
+    turns a missing artifact into a request-time error, not an import crash)."""
+    global _model, _FEATURES
+    if _model is None:
+        _model = joblib.load(MODEL_PATH)
+        # Column order straight from the fitted estimator — matches training.
+        _FEATURES = list(_model.feature_names_in_)
+    return _model, _FEATURES
 
 
 class VitalRow(BaseModel):
@@ -80,6 +90,7 @@ def health():
 @app.post("/score", response_model=ScoreResponse)
 def score(req: ScoreRequest):
     try:
+        model, FEATURES = get_model()
         df = pd.DataFrame([r.model_dump() for r in req.rows])
         df = df.sort_values("ICULOS").reset_index(drop=True)
         df["pid"] = "api"  # single-window scope; no cross-request state
