@@ -1,6 +1,4 @@
-# Project 2: Sepsis Early-Warning System
-
-**Days 21–30 | Healthcare ML Portfolio**
+# Sepsis Early-Warning System
 
 ## Business Context
 
@@ -23,24 +21,24 @@ and escalation *before* the crash instead of reacting to it.
 
 ## Approach
 
-1. **EDA + window definition** (Day 21): file layout, prevalence, onset timing;
+1. **EDA + window definition**: file layout, prevalence, onset timing;
    predict onset 6h ahead from past-only data.
-2. **Causal feature engineering** (Day 22): 13 signals × trailing 6h/24h
+2. **Causal feature engineering**: 13 signals × trailing 6h/24h
    mean+std, missingness fractions, `shift(1)` rate-of-change deltas = 91
    features; NaNs preserved, never filled.
-3. **Baseline** (Day 23): Logistic Regression on windows, patient-ID split
+3. **Baseline**: Logistic Regression on windows, patient-ID split
    (row shuffling would leak patients' futures into training).
-4. **Trees vs sequences** (Day 24): NaN-native LightGBM vs 1-layer LSTM on
+4. **Trees vs sequences**: NaN-native LightGBM vs 1-layer LSTM on
    raw 24h sequences (all positives + 10x negatives, CPU-feasible).
-5. **Rigorous evaluation** (Day 25): 5-fold GroupKFold by patient, OOF-based
+5. **Rigorous evaluation**: 5-fold GroupKFold by patient, OOF-based
    threshold analysis, gain feature importance.
-6. **Tracking + robustness** (Day 26): MLflow runs; partial-record tests
+6. **Tracking + robustness**: MLflow runs; partial-record tests
    (sparse real-time hours must score, not crash).
-7. **Replay simulator** (Day 27): hour-by-hour past-only scoring with
+7. **Replay simulator**: hour-by-hour past-only scoring with
    future-truncation invariance tests.
-8. **Serving + container** (Day 28): stateless FastAPI `POST /score`, 685 MB
+8. **Serving + container**: stateless FastAPI `POST /score`, 685 MB
    Docker image with bit-identical predictions.
-9. **Dashboard + deploy** (Day 29): Streamlit risk-trend viewer.
+9. **Dashboard + deploy**: Streamlit risk-trend viewer.
 
 ## Results
 
