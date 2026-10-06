@@ -120,6 +120,22 @@ make serve     # API on :8000
 make dashboard # Streamlit on :8501
 ```
 
+## Try It in 60 Seconds (no local setup needed)
+
+```bash
+docker pull bakr1m/sepsis-api:latest
+docker run -d --name sepsis -p 8002:8000 bakr1m/sepsis-api:latest
+curl http://localhost:8002/health
+# {"status":"healthy"}
+curl -X POST http://localhost:8002/score \
+  -H "Content-Type: application/json" -d @example_window.json
+# -> {"risk":0.5437,"alert":true,"hours_observed":12,"threshold":0.25}
+docker stop sepsis && docker rm sepsis
+```
+
+(`example_window.json` is in this repo — the exact 12h window CI
+smoke-tests the shipped image with. Verified live against `:latest`.)
+
 ## Run with Docker
 
 ```bash
@@ -129,6 +145,26 @@ curl -X POST http://localhost:8000/score \
   -H "Content-Type: application/json" -d @example_window.json
 # -> {"risk":0.5437,"alert":true,"hours_observed":12,"threshold":0.25}
 ```
+
+## Problems Encountered (Build & Deploy)
+
+1. **Import-time `torch.load` crashed CI.** The serving module loaded LSTM
+   weights at import; the gitignored artifact is absent on clean checkouts,
+   so test collection itself exploded. Same lazy-loading fix as Project 1:
+   weights load on first request, never at import.
+2. **Sparse early windows.** The first hours of a stay have almost no labs —
+   NaN storms that a median-impute baseline smeared into fake signal.
+   LightGBM's NaN-native splits doubled F1 vs the baseline and settled the
+   modeling choice; missingness is now preserved + flagged, never silently
+   filled.
+3. **LSTM lost to LightGBM.** The sequence model tied on ranking (ROC-AUC
+   0.7389 vs 0.7361) but lost on PR (0.2139 vs 0.2439) — the only metric
+   that matters at 2% prevalence. Shipped the trees; the LSTM stays in the
+   repo as a documented negative result.
+4. **Alert fatigue is the product problem.** At recall ≥ 0.8 the model fires
+   ~1,072 alerts per 100 patient-days — unusable at the bedside as-is. The
+   replay simulator quantifies this instead of hiding it; threshold 0.25 is
+   a starting point, not an answer.
 
 ## Key Learnings
 
