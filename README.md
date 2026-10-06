@@ -123,8 +123,8 @@ make dashboard # Streamlit on :8501
 ## Run with Docker
 
 ```bash
-docker pull bakr1m/sepsis-api:v1
-docker run -p 8000:8000 bakr1m/sepsis-api:v1
+docker pull bakr1m/sepsis-api:latest
+docker run -p 8000:8000 bakr1m/sepsis-api:latest
 curl -X POST http://localhost:8000/score \
   -H "Content-Type: application/json" -d @example_window.json
 # -> {"risk":0.5437,"alert":true,"hours_observed":12,"threshold":0.25}
